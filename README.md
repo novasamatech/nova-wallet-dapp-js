@@ -99,6 +99,28 @@ extension DappViewController: WKScriptMessageHandler {
 }
 ```
 
+Each message send from Dapp has the following structure:
+```
+{
+    id: string
+    msgType: string
+    origin: string
+    request: object
+    url: string
+}
+```
+
+For example, for ```pub(accounts.list)``` one can receive the following:
+```
+{
+    id = "1639543839750.1";
+    msgType = "pub(authorize.tab)";
+    origin = "dapp-request";
+    request = null;
+    url = "https://singular.rmrk.app/";
+}
+```
+
 To send response back to the DApp ```onAppResponse``` function must be used on the bridge side:
 ```
 extension WKWebView {
