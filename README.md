@@ -113,7 +113,7 @@ extension WKWebView {
 
 For ```pub(authorize.tab)``` one should send true/false. For example, ```webView.sendResult(type, "true")```.
 
-For ```pub(accounts.list)``` one shoule construct a json that matches that contains list of account objects with the following structure:
+For ```pub(accounts.list)``` one shoule construct a json that contains list of account objects with the following structure:
 ```
 export interface InjectedAccount {
   address: string;
