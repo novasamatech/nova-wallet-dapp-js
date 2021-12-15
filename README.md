@@ -17,34 +17,34 @@ Copy ```nova-min.js``` file from previous step to XCode project.
 Add the following variables:
 
 ```
-    static var providerJsUrl: URL {
-        return Bundle.main.url(forResource: "nova-min", withExtension: "js")!
-    }
+static var providerJsUrl: URL {
+    return Bundle.main.url(forResource: "nova-min", withExtension: "js")!
+}
 
-    static var providerScript: WKUserScript {
-        let source = try! String(contentsOf: providerJsUrl)
-        let script = WKUserScript(source: source, injectionTime: .atDocumentStart, forMainFrameOnly: false)
-        return script
-    }
+static var providerScript: WKUserScript {
+    let source = try! String(contentsOf: providerJsUrl)
+    let script = WKUserScript(source: source, injectionTime: .atDocumentStart, forMainFrameOnly: false)
+    return script
+}
 
-    static var listenerScript: WKUserScript {
-        let source =
-        """
-        window.addEventListener("message", ({ data, source }) => {
-          // only allow messages from our window, by the loader
-          if (source !== window) {
-            return;
-          }
+static var listenerScript: WKUserScript {
+    let source =
+    """
+    window.addEventListener("message", ({ data, source }) => {
+      // only allow messages from our window, by the loader
+      if (source !== window) {
+        return;
+      }
 
-          if (data.origin === "dapp-request") {
-            window.webkit.messageHandlers._nova_.postMessage(data);
-          }
-        });
-        """
+      if (data.origin === "dapp-request") {
+        window.webkit.messageHandlers._nova_.postMessage(data);
+      }
+    });
+    """
 
-        let script = WKUserScript(source: source, injectionTime: .atDocumentEnd, forMainFrameOnly: false)
-        return script
-    }
+    let script = WKUserScript(source: source, injectionTime: .atDocumentEnd, forMainFrameOnly: false)
+    return script
+}
 ```
 
 ```providerScript``` script represents js bridge that will be injected into the begining of dapp web page and will forward messages from the DApp.
@@ -67,7 +67,7 @@ view.addSubview(webView)
 
 Finally, add handler to web view controller and implement delegate:
 ```
-webView.configuration.userContentController.add(self, "_nova")
+webView.configuration.userContentController.add(self, "_nova_")
 ...
 
 extension DappViewController: WKScriptMessageHandler {
