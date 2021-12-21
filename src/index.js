@@ -6,7 +6,7 @@ import handlers from "./handlers";
 
 // send message to JSChannel: assembly
 function send(path, data) {
-  window.postMessage(window.postMessage({ ...data, origin: "dapp-request" }, "*"));
+  window.postMessage({ ...data, origin: "dapp-request" }, "*");
 }
 
 window.send = send;
