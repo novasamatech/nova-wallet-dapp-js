@@ -151,7 +151,7 @@ This is js type took from [polkadot extension](https://github.com/polkadot-js/ex
 webView.sendResult(type, "[{\"address\": \"HP8qJ8P4u4W2QgsJ8jzVuSsjfFTT6orQomFD6eTRSGEbiTK\"}]")
 ```
 
-For ```pub(extrinsic.sign)``` one should handle the request field which contains json with the following fields:
+For ```pub(extrinsic.sign)``` one should handle the `request` field of the message which contains json with the following format:
 ```
 interface SignerPayloadJSON {
   /**
