@@ -42,8 +42,12 @@ async function handleMsg(data) {
     case "pub(accounts.subscribe)":
     case "pub(bytes.sign)":
     case "pub(extrinsic.sign)":
-      response = await requestApp(data);
-      return _postResponse({ id: data.id, response });
+      try {
+        response = await requestApp(data);
+        return _postResponse({ id: data.id, response });
+      } catch (err) {
+        return _postResponse({ id: data.id, error: err.message });
+      }
     default:
       throw new Error(`Unable to handle message: ${data.message}`);
   }
