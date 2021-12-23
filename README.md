@@ -133,6 +133,16 @@ extension WKWebView {
 
 ```type``` is the message type received in the request (for example, ```pub(account.list)```) and ```result``` is a json string representing the response. The last parameter is ```error``` but for successfull responses we just pass ```null```.
 
+The example of error response is the following:
+```
+extension WKWebView {
+    public func sendError(type: String, message: String) {
+        let script = String(format: "window.walletExtension.onAppResponse(\"%@\", null, new Error(\"%@\"))", type, message)
+        evaluateJavaScript(script)
+    }
+}
+```
+
 For ```pub(authorize.tab)``` one should send true/false. For example, ```webView.sendResult(type, "true")```.
 
 For ```pub(accounts.list)``` one shoule construct a json that contains list of account objects with the following structure:
@@ -236,3 +246,8 @@ interface SignerResult {
 This is js type took from [polkadot api](https://github.com/polkadot-js/api/blob/f11c8f9360a956ea187a40730481e6e4552e6855/packages/types/src/types/extrinsic.ts#L121).
 
 Note that signature object must be constructed depending on runtime metadata (```MultiSignature``` for most chains) and scale encoded before inserting into the result.
+
+To reject the signing ```Rejected``` error message is enough:
+```
+webView.sendError(type: "pub(extrinsic.sign)", message: "Rejected")
+```
