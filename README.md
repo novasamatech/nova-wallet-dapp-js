@@ -246,3 +246,8 @@ interface SignerResult {
 This is js type took from [polkadot api](https://github.com/polkadot-js/api/blob/f11c8f9360a956ea187a40730481e6e4552e6855/packages/types/src/types/extrinsic.ts#L121).
 
 Note that signature object must be constructed depending on runtime metadata (```MultiSignature``` for most chains) and scale encoded before inserting into the result.
+
+To reject the signing ```Rejected``` error message is enough:
+```
+webView.sendError(type: "pub(extrinsic.sign)", message: "Rejected")
+```
