@@ -5,27 +5,24 @@
   "author": "Ruslan Rezin <ruslan@novawallet.io>",
   "license": "Apache-2",
   "scripts": {
-    "clean": "rm -rf dist/*",
-    "build": "rm -rf dist && parcel build src/index.js --no-source-maps -o nova_min.js -d dist"
+    "clean": "rm -rf dist .cache",
+    "build": "rm -rf dist && parcel build src/index.ts --no-source-maps -o nova_min.js -d dist",
+    "lint": "prettier --write 'src/**/*.ts'"
   },
   "dependencies": {
     "@babel/polyfill": "^7.8.3",
+    "@babel/preset-typescript": "^7.16.5",
     "@babel/runtime": "^7.11.2",
-    "@polkadot/extension-base": "0.33.0-beta.2",
-    "@polkadot/extension-dapp": "0.33.0-beta.2",
-    "@polkadot/extension-inject": "0.33.0-beta.2"
+    "@polkadot/extension-base": "0.42.2",
+    "@polkadot/extension-dapp": "0.42.2",
+    "@polkadot/extension-inject": "0.34.0-beta.12"
   },
   "devDependencies": {
     "@babel/core": "^7.8.3",
     "@babel/preset-env": "^7.8.3",
-    "@polkadot/dev": "^0.55.34",
-    "@webpack-cli/info": "^0.2.0",
-    "@webpack-cli/init": "^0.3.0",
     "babel-loader": "^8.0.6",
-    "eslint": "^6.8.0",
-    "eslint-config-prettier": "^6.9.0",
-    "eslint-plugin-prettier": "^3.1.2",
     "parcel-bundler": "^1.12.4",
-    "prettier": "^1.19.1"
+    "prettier": "^1.19.1",
+    "typescript": "^4.5.4"
   }
 }
