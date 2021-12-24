@@ -149,7 +149,7 @@ For ```pub(accounts.list)``` one shoule construct a json that contains list of a
 ```
 export interface InjectedAccount {
   address: string;
-  genesisHash?: string | null;
+  genesisHash?: string | null; // should start with 0x prefix
   name?: string;
   type?: KeypairType;
 }
