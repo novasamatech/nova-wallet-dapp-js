@@ -1,6 +1,6 @@
 declare global {
   interface Window {
-    send: (path: string, data: any) => void
+    send: (data: any) => void
     walletExtension: {
       onAppResponse: (msgType: string, response: any, error: Error) => void
     }
@@ -9,8 +9,11 @@ declare global {
 
 export type MessageData = {
   id: string
-  message: string
-  request: any
+  message?: string
+  msgType?: string
+  request: object
+  origin?: string
+  url?: string
 }
 
 export type Handler = {

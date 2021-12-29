@@ -8,17 +8,21 @@ yarn install
 yarn build
 ```
 
-In result ```nova-min.js``` file will be created in the ```dist``` directory
+In result ```nova_min.js``` file will be created in the ```dist``` directory
+
+# Usage in browser as extension
+
+Just add `dist` folder as an extension in Chrome browser in developer mode.
 
 # Usage on iOS
 
-Copy ```nova-min.js``` file from previous step to XCode project.
+Copy ```nova_min.js``` file from previous step to XCode project.
 
 Add the following variables:
 
-```
+```swift
 static var providerJsUrl: URL {
-    return Bundle.main.url(forResource: "nova-min", withExtension: "js")!
+    return Bundle.main.url(forResource: "nova_min", withExtension: "js")!
 }
 
 static var providerScript: WKUserScript {
@@ -51,7 +55,7 @@ static var listenerScript: WKUserScript {
 ```listenerScript``` script filters messages from the dapp and forwards only relevant requests to the app.
 
 Then create web view and add scripts to it:
-```
+```swift
 let configuration = WKWebViewConfiguration()
 let controller = WKUserContentController()
 controller.addUserScript(Self.providerScript)
@@ -66,7 +70,7 @@ view.addSubview(webView)
 ```
 
 Finally, add handler to web view controller and implement delegate:
-```
+```swift
 webView.configuration.userContentController.add(self, "_nova_")
 ...
 
@@ -100,7 +104,7 @@ extension DappViewController: WKScriptMessageHandler {
 ```
 
 Each message send from Dapp has the following structure:
-```
+```swift
 {
     id: string
     msgType: string
@@ -111,7 +115,7 @@ Each message send from Dapp has the following structure:
 ```
 
 For example, for ```pub(accounts.list)``` one can receive the following:
-```
+```swift
 {
     id = "1639543839750.1";
     msgType = "pub(authorize.tab)";
@@ -122,7 +126,7 @@ For example, for ```pub(accounts.list)``` one can receive the following:
 ```
 
 To send response back to the DApp ```onAppResponse``` function must be used on the bridge side:
-```
+```swift
 extension WKWebView {
     public func sendResult(type: String, result: CustomStringConvertible) {
         let script = String(format: "window.walletExtension.onAppResponse(\"%@\", %@, null)", type, result.description)
@@ -134,7 +138,7 @@ extension WKWebView {
 ```type``` is the message type received in the request (for example, ```pub(account.list)```) and ```result``` is a json string representing the response. The last parameter is ```error``` but for successfull responses we just pass ```null```.
 
 The example of error response is the following:
-```
+```swift
 extension WKWebView {
     public func sendError(type: String, message: String) {
         let script = String(format: "window.walletExtension.onAppResponse(\"%@\", null, new Error(\"%@\"))", type, message)
@@ -146,7 +150,7 @@ extension WKWebView {
 For ```pub(authorize.tab)``` one should send true/false. For example, ```webView.sendResult(type, "true")```.
 
 For ```pub(accounts.list)``` one shoule construct a json that contains list of account objects with the following structure:
-```
+```swift
 export interface InjectedAccount {
   address: string;
   genesisHash?: string | null;
@@ -157,12 +161,12 @@ export interface InjectedAccount {
 type KeypairType = 'ed25519' | 'sr25519' | 'ecdsa' | 'ethereum';
 ```
 This is js type took from [polkadot extension](https://github.com/polkadot-js/extension/blob/master/packages/extension-inject/src/types.ts#L14) repo. As one can see the only required field is address. For example, response can be as following:
-```
+```swift
 webView.sendResult(type, "[{\"address\": \"HP8qJ8P4u4W2QgsJ8jzVuSsjfFTT6orQomFD6eTRSGEbiTK\"}]")
 ```
 
 For ```pub(extrinsic.sign)``` one should handle the `request` field of the message which contains json with the following format:
-```
+```swift
 interface SignerPayloadJSON {
   /**
    * @description The ss-58 encoded address
@@ -229,7 +233,7 @@ interface SignerPayloadJSON {
 This is js type took from [polkadot api](https://github.com/polkadot-js/api/blob/f11c8f9360a956ea187a40730481e6e4552e6855/packages/types/src/types/extrinsic.ts#L30).
 
 After user confirmation mobile app sends a json response with the following format:
-```
+```swift
 interface SignerResult {
   /**
    * @description The id for this request

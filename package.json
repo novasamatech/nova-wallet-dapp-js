@@ -10,19 +10,22 @@
     "lint": "prettier --write 'src/**/*.ts'"
   },
   "dependencies": {
-    "@babel/polyfill": "^7.8.3",
     "@babel/preset-typescript": "^7.16.5",
     "@babel/runtime": "^7.11.2",
     "@polkadot/extension-base": "0.42.2",
     "@polkadot/extension-dapp": "0.42.2",
-    "@polkadot/extension-inject": "0.34.0-beta.12"
+    "@polkadot/extension-inject": "0.42.2"
   },
   "devDependencies": {
     "@babel/core": "^7.8.3",
     "@babel/preset-env": "^7.8.3",
     "babel-loader": "^8.0.6",
     "parcel-bundler": "^1.12.4",
+    "parcel-plugin-static-files-copy": "^2.6.0",
     "prettier": "^1.19.1",
     "typescript": "^4.5.4"
+  },
+  "staticFiles": {
+    "staticPath": ["extension"]
   }
 }

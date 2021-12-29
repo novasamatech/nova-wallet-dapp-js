@@ -1,0 +1,21 @@
+{
+  "manifest_version": 2,
+  "version": "1.0",
+  "author": "Nova Extension",
+  "description": "Nova extension for dapps.",
+  "homepage_url": "https://github.com/nova-wallet/nova-wallet-dapp-js/",
+  "name": "Nova Extension",
+  "short_name": "Nova",
+  "permissions": ["storage", "tabs"],
+  "browser_action": {
+    "default_title": "Nova extension",
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [{
+    "js": ["content.js"],
+    "matches": ["http://*/*", "https://*/*"],
+    "run_at": "document_start"
+  }],
+  "web_accessible_resources": ["nova_min.js"],
+  "content_security_policy": "script-src 'self' blob: 'unsafe-eval' 'wasm-eval'; object-src 'self'"
+}

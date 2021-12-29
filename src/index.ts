@@ -1,21 +1,17 @@
 import { enable, handleResponse } from '@polkadot/extension-base/page'
 import { injectExtension } from '@polkadot/extension-inject'
 import { MessageData, Handler } from './types'
+import packageInfo from '../package.json'
 
 class WalletExtension {
-  constructor() {
-    this.initExtension()
-  }
-
-  EXTENSTION_MSG_PATH = 'extensionRequest'
   messageHandlers: {
     [key: string]: Handler
   } = {}
 
-  initExtension() {
+  constructor() {
     injectExtension(enable, {
-      name: 'novawallet-extension',
-      version: '1.0',
+      name: packageInfo.name,
+      version: packageInfo.version,
     })
 
     window.send = this.send
@@ -45,7 +41,7 @@ class WalletExtension {
   /*
    * Send message to JSChannel: assembly
    */
-  send(path: string, data: MessageData) {
+  send(data: MessageData) {
     window.postMessage({ ...data, origin: 'dapp-request' }, '*')
   }
 
@@ -70,10 +66,10 @@ class WalletExtension {
   /*
    * Send request to host app
    */
-  public sendAppRequest({ id, message, request }: MessageData) {
+  public sendAppRequest({ id, message = '', request }: MessageData) {
     return new Promise((resolve, reject) => {
       this.addHandler(message, resolve, reject)
-      window.send(this.EXTENSTION_MSG_PATH, {
+      window.send({
         id,
         msgType: message,
         request,
@@ -85,12 +81,12 @@ class WalletExtension {
   /*
    * Get response from host app
    */
-  public onAppResponse(msgType: string, response: any, error: Error) {
-    if (this.messageHandlers[msgType]) {
+  public onAppResponse(message: string, response: any, error: Error) {
+    if (this.messageHandlers[message]) {
       if (error) {
-        this.messageHandlers[msgType].reject(error)
+        this.messageHandlers[message].reject(error)
       } else {
-        this.messageHandlers[msgType].resolve(response)
+        this.messageHandlers[message].resolve(response)
       }
     }
   }
@@ -99,7 +95,6 @@ class WalletExtension {
    * Handle message from dapp page as extension-content
    */
   public async handleMessage(data: MessageData) {
-    let response
     switch (data.message) {
       case 'pub(authorize.tab)':
       case 'pub(metadata.list)':
@@ -109,7 +104,7 @@ class WalletExtension {
       case 'pub(bytes.sign)':
       case 'pub(extrinsic.sign)':
         try {
-          response = await this.sendAppRequest(data)
+          let response = await this.sendAppRequest(data)
           return this.postResponse({ id: data.id, response })
         } catch (err: any) {
           return this.postResponse({ id: data.id, error: err.message })
@@ -122,3 +117,7 @@ class WalletExtension {
 }
 
 const extension = new WalletExtension()
+
+export {
+  extension
+}
