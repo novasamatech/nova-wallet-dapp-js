@@ -53,7 +53,12 @@ async function handleMsg(data) {
   }
 }
 
+function onAppSubscription(requestId, subscriptionString) {
+  _postResponse({ id: requestId, subscription: subscriptionString })
+}
+
 export default {
   handleMsg,
   onAppResponse,
+  onAppSubscription
 };
