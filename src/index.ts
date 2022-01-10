@@ -17,6 +17,7 @@ class WalletExtension {
     window.send = this.send
     window.walletExtension = {
       onAppResponse: this.onAppResponse,
+      onAppSubscription: this.onAppSubscription,
     }
 
     // setup a response listener (events created by the loader for extension responses)
@@ -38,13 +39,6 @@ class WalletExtension {
     })
   }
 
-  /*
-   * Send message to JSChannel: assembly
-   */
-  send(data: MessageData) {
-    window.postMessage({ ...data, origin: 'dapp-request' }, '*')
-  }
-
   addHandler(
     type: string,
     resolve: (value: any) => void,
@@ -57,10 +51,10 @@ class WalletExtension {
   }
 
   /*
-   * Send message to dapp page as extension-content
+   * Send message to JSChannel: assembly
    */
-  postResponse(data: any) {
-    window.postMessage({ ...data, origin: 'content' }, '*')
+  send(data: MessageData) {
+    window.postMessage({ ...data, origin: 'dapp-request' }, '*')
   }
 
   /*
@@ -79,6 +73,13 @@ class WalletExtension {
   }
 
   /*
+   * Send message to dapp page as extension-content
+   */
+  postResponse(data: any) {
+    window.postMessage({ ...data, origin: 'content' }, '*')
+  }
+
+  /*
    * Get response from host app
    */
   public onAppResponse(message: string, response: any, error: Error) {
@@ -90,6 +91,10 @@ class WalletExtension {
       }
     }
   }
+
+  public onAppSubscription(requestId: string, subscriptionString: string) {
+    this.postResponse({ id: requestId, subscription: subscriptionString })
+  }  
 
   /*
    * Handle message from dapp page as extension-content
@@ -118,6 +123,4 @@ class WalletExtension {
 
 const extension = new WalletExtension()
 
-export {
-  extension
-}
+export default extension

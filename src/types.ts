@@ -3,6 +3,10 @@ declare global {
     send: (data: any) => void
     walletExtension: {
       onAppResponse: (msgType: string, response: any, error: Error) => void
+      onAppSubscription: (requestId: string, subscriptionString: string) => void
+    },
+    injectedWeb3: {
+      [key: string]: {}
     }
   }
 }
