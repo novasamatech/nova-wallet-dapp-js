@@ -251,3 +251,18 @@ To reject the signing ```Rejected``` error message is enough:
 ```
 webView.sendError(type: "pub(extrinsic.sign)", message: "Rejected")
 ```
+Besides regular responses there is an option to provide data for subscription requests such as ```account.subscribe```. To properly handle such request in the application one needs act as follows:
+
+1. Provide reqular response to confirm subscription acceptance by sending ```true``` as a result to ```onAppResponse``` function;
+2. When new data is ready (for example, accounts) call ```onAppSubscription``` function passing subscription **request id** (not a message type) and resulting json;
+
+```
+extension WKWebView {
+    ...
+    
+    public func sendSubscriptionResult(for requestId: String, result: CustomStringConvertible) {
+        let script = String(format: "window.walletExtension.onAppSubscription(\"%@\", %@)", requestId, result.description)
+        evaluateJavaScript(script)
+    }
+}
+```
