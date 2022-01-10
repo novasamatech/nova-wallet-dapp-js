@@ -2,8 +2,6 @@ const EXTENSION_MSG_PATH = "extensionRequest";
 
 const _msgCompleters = {};
 
-const _subscriptions = {};
-
 // send request to host app
 async function requestApp({ id, message, request }) {
   return new Promise((resolve, reject) => {
