@@ -38,4 +38,5 @@ injectExtension(enable, {
 
 window.walletExtension = {
   onAppResponse: handlers.onAppResponse,
+  onAppSubscription: handlers.onAppSubscription
 };
