@@ -32,7 +32,7 @@ window.addEventListener("message", ({ data, source }) => {
 });
 
 injectExtension(enable, {
-  name: "novawallet-extension",
+  name: "polkadot-js",
   version: "1.0",
 });
 
