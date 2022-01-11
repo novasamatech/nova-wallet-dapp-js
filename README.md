@@ -254,7 +254,7 @@ This is js type took from [polkadot api](https://github.com/polkadot-js/api/blob
 Note that signature object must be constructed depending on runtime metadata (```MultiSignature``` for most chains) and scale encoded before inserting into the result.
 
 To reject the signing ```Rejected``` error message is enough:
-```
+```swift
 webView.sendError(type: "pub(extrinsic.sign)", message: "Rejected")
 ```
 
@@ -265,7 +265,7 @@ Besides regular responses there is an option to provide data for subscription re
 1. Provide reqular response to confirm subscription acceptance by sending ```true``` as a result to ```onAppResponse``` function;
 2. When new data is ready (for example, accounts) call ```onAppSubscription``` function passing subscription **request id** (not a message type) and resulting json;
 
-```
+```swift
 extension WKWebView {
     ...
     
@@ -279,7 +279,7 @@ extension WKWebView {
 ## Metadata
 
 DApps and extensions can exchange metadata. Firstly, DApp sends ```pub(metadata.list)``` request to figure out which networks extension supports. Extension must respond with the list of following objects:
-```
+```swift
 interface InjectedMetadataKnown {
   genesisHash: string;
   specVersion: number;
@@ -290,7 +290,7 @@ This is js type took from [polkadot js extension](https://github.com/polkadot-js
 
 If DApp finds out that metadata is not up to date it can ask extension to update it sending ```pub(metadata.provide)``` with request body having ```Metadatadef``` structure:
 
-```
+```swift
 export interface MetadataDefBase {
   chain: string;
   genesisHash: string;
