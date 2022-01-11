@@ -318,3 +318,5 @@ export type ExtDef = Record<string, ExtInfo>;
 ```
 
 This is js type took from [polkadot js extension](https://github.com/polkadot-js/extension/blob/master/packages/extension-inject/src/types.ts#L61).
+
+If the extension accepts metadata update then it should send ```true``` back, otherwise - ```false```.
