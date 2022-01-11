@@ -1,6 +1,6 @@
 declare global {
   interface Window {
-    send: (data: any) => void
+    send: (path: string, data: any) => void
     walletExtension: {
       onAppResponse: (msgType: string, response: any, error: Error) => void
       onAppSubscription: (requestId: string, subscriptionString: string) => void
@@ -13,14 +13,17 @@ declare global {
 
 export type MessageData = {
   id: string
-  message?: string
-  msgType?: string
+  message: string
   request: object
-  origin?: string
-  url?: string
+  origin: string
 }
 
 export type Handler = {
-  resolve: (value: any) => void
-  reject: (reason?: any) => void
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  resolve: (data?: any) => void;
+  reject: (error: Error) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  subscriber?: (data: any) => void;
 }
+
+export type Handlers = Record<string, Handler>;

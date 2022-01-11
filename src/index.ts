@@ -1,24 +1,19 @@
 import { enable, handleResponse } from '@polkadot/extension-base/page'
 import { injectExtension } from '@polkadot/extension-inject'
-import { MessageData, Handler } from './types'
+import { MessageData } from './types'
+import { addHandler, getHandler } from './handlers'
 import packageInfo from '../package.json'
 
+function inject () {
+  injectExtension(enable, {
+    name: packageInfo.name,
+    version: packageInfo.version,
+  });
+}
+
 class WalletExtension {
-  messageHandlers: {
-    [key: string]: Handler
-  } = {}
-
   constructor() {
-    injectExtension(enable, {
-      name: packageInfo.name,
-      version: packageInfo.version,
-    })
-
-    window.send = this.send
-    window.walletExtension = {
-      onAppResponse: this.onAppResponse,
-      onAppSubscription: this.onAppSubscription,
-    }
+    window.send = this.sendRequest    
 
     // setup a response listener (events created by the loader for extension responses)
     window.addEventListener('message', ({ data, source }) => {
@@ -37,33 +32,40 @@ class WalletExtension {
         this.handleMessage(data)
       }
     })
+
+    inject()
+
+    window.walletExtension = {
+      onAppResponse: this.onAppResponse,
+      onAppSubscription: this.onAppSubscription,
+    }
   }
 
-  addHandler(
-    type: string,
-    resolve: (value: any) => void,
-    reject: (reason?: any) => void
-  ) {
-    this.messageHandlers[type] = {
-      resolve,
-      reject,
-    }
+  /*
+   * Send message to dapp page as extension-content
+   */
+  postResponse(data: any) {
+    this._postMessage("content", data)
   }
 
   /*
    * Send message to JSChannel: assembly
    */
-  send(data: MessageData) {
-    window.postMessage({ ...data, origin: 'dapp-request' }, '*')
+  sendRequest(data: any) {
+    this._postMessage("dapp-request", data)
+  }
+
+  _postMessage(origin: string, data: any) {
+    window.postMessage({ ...data, origin }, "*");
   }
 
   /*
    * Send request to host app
    */
-  public sendAppRequest({ id, message = '', request }: MessageData) {
+  public async sendAppRequest({ id, message, request }: MessageData) {
     return new Promise((resolve, reject) => {
-      this.addHandler(message, resolve, reject)
-      window.send({
+      addHandler(message, resolve, reject)
+      this.sendRequest({
         id,
         msgType: message,
         request,
@@ -73,21 +75,15 @@ class WalletExtension {
   }
 
   /*
-   * Send message to dapp page as extension-content
-   */
-  postResponse(data: any) {
-    window.postMessage({ ...data, origin: 'content' }, '*')
-  }
-
-  /*
    * Get response from host app
    */
   public onAppResponse(message: string, response: any, error: Error) {
-    if (this.messageHandlers[message]) {
+    const handler = getHandler(message)
+    if (handler) {
       if (error) {
-        this.messageHandlers[message].reject(error)
+        handler.reject(error)
       } else {
-        this.messageHandlers[message].resolve(response)
+        handler.resolve(response)
       }
     }
   }
@@ -110,6 +106,7 @@ class WalletExtension {
       case 'pub(extrinsic.sign)':
         try {
           let response = await this.sendAppRequest(data)
+
           return this.postResponse({ id: data.id, response })
         } catch (err: any) {
           return this.postResponse({ id: data.id, error: err.message })
