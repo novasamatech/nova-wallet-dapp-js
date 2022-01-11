@@ -6,7 +6,7 @@ import packageInfo from '../package.json'
 
 function inject () {
   injectExtension(enable, {
-    name: packageInfo.name,
+    name: 'polkadot-js',
     version: packageInfo.version,
   });
 }

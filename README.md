@@ -147,13 +147,15 @@ extension WKWebView {
 }
 ```
 
+## Extrinsic signing flow
+
 For ```pub(authorize.tab)``` one should send true/false. For example, ```webView.sendResult(type, "true")```.
 
 For ```pub(accounts.list)``` one shoule construct a json that contains list of account objects with the following structure:
 ```swift
 export interface InjectedAccount {
   address: string;
-  genesisHash?: string | null;
+  genesisHash?: string | null; // should start with 0x prefix
   name?: string;
   type?: KeypairType;
 }
@@ -255,3 +257,68 @@ To reject the signing ```Rejected``` error message is enough:
 ```
 webView.sendError(type: "pub(extrinsic.sign)", message: "Rejected")
 ```
+
+## Subscriptions
+
+Besides regular responses there is an option to provide data for subscription requests such as ```account.subscribe```. To properly handle such request in the application one needs act as follows:
+
+1. Provide reqular response to confirm subscription acceptance by sending ```true``` as a result to ```onAppResponse``` function;
+2. When new data is ready (for example, accounts) call ```onAppSubscription``` function passing subscription **request id** (not a message type) and resulting json;
+
+```
+extension WKWebView {
+    ...
+    
+    public func sendSubscriptionResult(for requestId: String, result: CustomStringConvertible) {
+        let script = String(format: "window.walletExtension.onAppSubscription(\"%@\", %@)", requestId, result.description)
+        evaluateJavaScript(script)
+    }
+}
+```
+
+## Metadata
+
+DApps and extensions can exchange metadata. Firstly, DApp sends ```pub(metadata.list)``` request to figure out which networks extension supports. Extension must respond with the list of following objects:
+```
+interface InjectedMetadataKnown {
+  genesisHash: string;
+  specVersion: number;
+}
+```
+
+This is js type took from [polkadot js extension](https://github.com/polkadot-js/extension/blob/master/packages/extension-inject/src/types.ts#L71).
+
+If DApp finds out that metadata is not up to date it can ask extension to update it sending ```pub(metadata.provide)``` with request body having ```Metadatadef``` structure:
+
+```
+export interface MetadataDefBase {
+  chain: string;
+  genesisHash: string;
+  icon: string;
+  ss58Format: number;
+  chainType?: 'substrate' | 'ethereum'
+}
+
+export interface MetadataDef extends MetadataDefBase {
+  color?: string;
+  specVersion: number;
+  tokenDecimals: number;
+  tokenSymbol: string;
+  types: Record<string, Record<string, string> | string>;
+  metaCalls?: string;
+  userExtensions?: ExtDef;
+}
+
+export type ExtTypes = Record<string, string>;
+
+export type ExtInfo = {
+  extrinsic: ExtTypes;
+  payload: ExtTypes;
+}
+
+export type ExtDef = Record<string, ExtInfo>;
+```
+
+This is js type took from [polkadot js extension](https://github.com/polkadot-js/extension/blob/master/packages/extension-inject/src/types.ts#L61).
+
+If the extension accepts metadata update then it should send ```true``` back, otherwise - ```false```.
