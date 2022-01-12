@@ -26,4 +26,4 @@ export type Handler = {
   subscriber?: (data: any) => void;
 }
 
-export type Handlers = Record<string, Handler>;
+export type Handlers = Map<string, Handler>;

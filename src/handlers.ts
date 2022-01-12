@@ -1,18 +1,27 @@
 import { Handlers, Handler } from './types'
 
-const _messageHandlers: Handlers = {}
+class HandlersStore {
+  _messageHandlers: Handlers
 
-export const addHandler = (
-  type: string,
-  resolve: (value: any) => void,
-  reject: (reason?: any) => void
-) => {
-  _messageHandlers[type] = {
-    resolve,
-    reject,
+  constructor() {
+    this._messageHandlers = new Map<string, Handler>()
   }
+
+  addHandler = (
+    type: string,
+    resolve: (value: any) => void,
+    reject: (reason?: any) => void
+  ) => {
+    this._messageHandlers.set(type, {
+      resolve,
+      reject,
+    })
+  }
+  
+  getHandler = (type: string): Handler | undefined => {
+    return this._messageHandlers.get(type)
+  }
+  
 }
 
-export const getHandler = (type: string): Handler => {
-  return _messageHandlers[type]
-}
+export default HandlersStore

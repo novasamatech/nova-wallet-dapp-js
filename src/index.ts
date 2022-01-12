@@ -1,7 +1,7 @@
 import { enable, handleResponse } from '@polkadot/extension-base/page'
 import { injectExtension } from '@polkadot/extension-inject'
 import { MessageData } from './types'
-import { addHandler, getHandler } from './handlers'
+import HandlerStore from './handlers'
 import packageInfo from '../package.json'
 
 function inject () {
@@ -12,7 +12,10 @@ function inject () {
 }
 
 class WalletExtension {
+  handlers: HandlerStore
+
   constructor() {
+    this.handlers = new HandlerStore()
     window.send = this.sendRequest    
 
     // setup a response listener (events created by the loader for extension responses)
@@ -36,8 +39,8 @@ class WalletExtension {
     inject()
 
     window.walletExtension = {
-      onAppResponse: this.onAppResponse,
-      onAppSubscription: this.onAppSubscription,
+      onAppResponse: this.onAppResponse.bind(this),
+      onAppSubscription: this.onAppSubscription.bind(this),
     }
   }
 
@@ -64,7 +67,7 @@ class WalletExtension {
    */
   public async sendAppRequest({ id, message, request }: MessageData) {
     return new Promise((resolve, reject) => {
-      addHandler(message, resolve, reject)
+      this.handlers.addHandler(message, resolve, reject)
       this.sendRequest({
         id,
         msgType: message,
@@ -78,7 +81,7 @@ class WalletExtension {
    * Get response from host app
    */
   public onAppResponse(message: string, response: any, error: Error) {
-    const handler = getHandler(message)
+    const handler = this.handlers.getHandler(message)
     if (handler) {
       if (error) {
         handler.reject(error)
