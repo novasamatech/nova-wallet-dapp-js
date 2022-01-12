@@ -152,7 +152,7 @@ extension WKWebView {
 For ```pub(authorize.tab)``` one should send true/false. For example, ```webView.sendResult(type, "true")```.
 
 For ```pub(accounts.list)``` one shoule construct a json that contains list of account objects with the following structure:
-```swift
+```typescript
 export interface InjectedAccount {
   address: string;
   genesisHash?: string | null; // should start with 0x prefix
@@ -168,7 +168,7 @@ webView.sendResult(type, "[{\"address\": \"HP8qJ8P4u4W2QgsJ8jzVuSsjfFTT6orQomFD6
 ```
 
 For ```pub(extrinsic.sign)``` one should handle the `request` field of the message which contains json with the following format:
-```swift
+```typescript
 interface SignerPayloadJSON {
   /**
    * @description The ss-58 encoded address
@@ -235,7 +235,7 @@ interface SignerPayloadJSON {
 This is js type took from [polkadot api](https://github.com/polkadot-js/api/blob/f11c8f9360a956ea187a40730481e6e4552e6855/packages/types/src/types/extrinsic.ts#L30).
 
 After user confirmation mobile app sends a json response with the following format:
-```swift
+```typescript
 interface SignerResult {
   /**
    * @description The id for this request
@@ -279,7 +279,7 @@ extension WKWebView {
 ## Metadata
 
 DApps and extensions can exchange metadata. Firstly, DApp sends ```pub(metadata.list)``` request to figure out which networks extension supports. Extension must respond with the list of following objects:
-```swift
+```typescript
 interface InjectedMetadataKnown {
   genesisHash: string;
   specVersion: number;
@@ -290,7 +290,7 @@ This is js type took from [polkadot js extension](https://github.com/polkadot-js
 
 If DApp finds out that metadata is not up to date it can ask extension to update it sending ```pub(metadata.provide)``` with request body having ```Metadatadef``` structure:
 
-```swift
+```typescript
 export interface MetadataDefBase {
   chain: string;
   genesisHash: string;
@@ -326,7 +326,7 @@ If the extension accepts metadata update then it should send ```true``` back, ot
 ## Signing raw bytes
 
 Besides signing extrinsics DApps have an option to request signing raw bytes. To achive this ```pub(bytes.sign)``` message is sent with request having the ```SignerPayloadRaw``` structure:
-```
+```typescript
 export interface SignerPayloadRawBase {
   /**
    * @description The hex-encoded data for this request
