@@ -322,3 +322,36 @@ export type ExtDef = Record<string, ExtInfo>;
 This is js type took from [polkadot js extension](https://github.com/polkadot-js/extension/blob/master/packages/extension-inject/src/types.ts#L61).
 
 If the extension accepts metadata update then it should send ```true``` back, otherwise - ```false```.
+
+## Signing raw bytes
+
+Besides signing extrinsics DApps have an option to request signing raw bytes. To achive this ```pub(bytes.sign)``` message is sent with request having the ```SignerPayloadRaw``` structure:
+```
+export interface SignerPayloadRawBase {
+  /**
+   * @description The hex-encoded data for this request
+   */
+  data: string;
+
+  /**
+   * @description The type of the contained data
+   */
+  type?: 'bytes' | 'payload';
+}
+
+export interface SignerPayloadRaw extends SignerPayloadRawBase {
+  /**
+   * @description The ss-58 encoded address
+   */
+  address: string;
+
+  /**
+   * @description The type of the contained data
+   */
+  type: 'bytes' | 'payload';
+}
+```
+
+This is js type took from [polkadot js extension](https://github.com/polkadot-js/extension/blob/master/packages/extension-base/src/page/Signer.ts#L30).
+
+If user confirms signing the same response format as for extrinsic is sent back.
