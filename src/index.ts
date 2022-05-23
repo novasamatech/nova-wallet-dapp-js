@@ -41,6 +41,7 @@ class WalletExtension {
     window.walletExtension = {
       onAppResponse: this.onAppResponse.bind(this),
       onAppSubscription: this.onAppSubscription.bind(this),
+      isNovaWallet: true
     }
   }
 
