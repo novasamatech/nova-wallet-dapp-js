@@ -4,6 +4,7 @@ declare global {
     walletExtension: {
       onAppResponse: (msgType: string, response: any, error: Error) => void
       onAppSubscription: (requestId: string, subscriptionString: string) => void
+      isNovaWallet: bool
     },
     injectedWeb3: {
       [key: string]: {}
