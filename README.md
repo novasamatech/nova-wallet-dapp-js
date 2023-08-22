@@ -355,3 +355,7 @@ export interface SignerPayloadRaw extends SignerPayloadRawBase {
 This is js type took from [polkadot js extension](https://github.com/polkadot-js/extension/blob/master/packages/extension-base/src/page/Signer.ts#L30).
 
 If user confirms signing the same response format as for extrinsic is sent back.
+
+## License
+Nova Wallet DApp is available under the Apache 2.0 license. See the LICENSE file for more info.
+© Novasama Technologies GmbH 2023
