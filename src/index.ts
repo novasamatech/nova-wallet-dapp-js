@@ -9,6 +9,8 @@ function inject () {
     name: 'polkadot-js',
     version: packageInfo.version,
   });
+
+  window.injectedWeb3['nova-wallet'] = window.injectedWeb3['polkadot-js']
 }
 
 class WalletExtension {
@@ -68,7 +70,7 @@ class WalletExtension {
    */
   public async sendAppRequest({ id, message, request }: MessageData) {
     return new Promise((resolve, reject) => {
-      this.handlers.addHandler(message, resolve, reject)
+      this.handlers.addHandler(id, resolve, reject)
       this.sendRequest({
         id,
         msgType: message,
@@ -81,8 +83,8 @@ class WalletExtension {
   /*
    * Get response from host app
    */
-  public onAppResponse(message: string, response: any, error: Error) {
-    const handler = this.handlers.getHandler(message)
+  public onAppResponse(id: string, response: any, error: Error) {
+    const handler = this.handlers.getHandler(id)
     if (handler) {
       if (error) {
         handler.reject(error)
